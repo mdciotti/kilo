@@ -1072,6 +1072,21 @@ void editorProcessKeypress() {
 
 /*** init ***/
 
+void updateWindowSize() {
+    if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
+        perror("Unable to query the screen for size (columns / rows)");
+        exit(1);
+    }
+    E.screenrows -= 2;
+}
+
+void handleSigWinCh(int unused __attribute__((unused))) {
+    updateWindowSize();
+    if (E.cy > E.screenrows) E.cy = E.screenrows - 1;
+    if (E.cx > E.screencols) E.cx = E.screencols - 1;
+    editorRefreshScreen();
+}
+
 void initEditor() {
     E.cx = 0;
     E.cy = 0;
@@ -1086,10 +1101,8 @@ void initEditor() {
     E.statusmsg_time = 0;
     E.syntax = NULL;
 
-    if (getWindowSize(&E.screenrows, &E.screencols) == -1)
-        die("getWindowSize");
-
-    E.screenrows -= 2;
+    updateWindowSize();
+    signal(SIGWINCH, handleSigWinCh);
 }
 
 int main(int argc, char *argv[]) {
