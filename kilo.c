@@ -107,7 +107,23 @@ char *C_HL_keywords[] = {
     "switch", "if", "while", "for", "break", "continue", "return", "else",
     "struct", "union", "typedef", "static", "enum", "class", "case",
     "int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|",
-    "void|", NULL
+    "void|",
+    "#define|", "#endif|", "#error|", "#if|", "#ifdef|", "#ifndef|",
+    "#include|", "#undef|", NULL
+};
+
+char *MAKE_HL_extensions[] = { "Makefile", NULL };
+char *MAKE_HL_keywords[] = { NULL };
+
+char *PYTHON_HL_extensions[] = { ".py", NULL };
+char *PYTHON_HL_keywords[] = {
+    "and", "as", "assert", "break", "class", "continue", "def", "del", "elif",
+    "else", "except", "exec", "finally", "for", "from", "global", "if",
+    "import", "in", "is", "lambda", "not", "or", "pass", "print", "raise",
+    "return", "try", "while", "with", "yield",
+    "buffer|", "bytearray|", "complex|", "False|", "float|", "frozenset|",
+    "int|", "list|", "long|", "None|", "set|", "str|", "tuple|", "True|",
+    "type|", "unicode|", "xrange|", NULL
 };
 
 struct editorSyntax HLDB[] = {
@@ -118,6 +134,20 @@ struct editorSyntax HLDB[] = {
         "//", "/*", "*/",
         HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
     },
+    {
+        "make",
+        MAKE_HL_extensions,
+        MAKE_HL_keywords,
+        "#", NULL, NULL,
+        HL_HIGHLIGHT_STRINGS
+    },
+    {
+        "python",
+        PYTHON_HL_extensions,
+        PYTHON_HL_keywords,
+        "#", NULL, NULL,
+        HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
+     }
 };
 
 #define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))
