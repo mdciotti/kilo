@@ -172,6 +172,9 @@ void disableRawMode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1) {
         die("tcsetattr");
     }
+
+    // Restore terminal state
+    write(STDOUT_FILENO, "\x1b[2J\x1b[H\x1b[?1049l", 15);
 }
 
 void enableRawMode() {
@@ -191,6 +194,9 @@ void enableRawMode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
         die("tcsetattr");
     }
+
+    // Save terminal state
+    write(STDOUT_FILENO, "\x1b[?1049h", 8);
 }
 
 int editorReadKey() {
@@ -1008,8 +1014,6 @@ void editorProcessKeypress() {
                 quit_times--;
                 return;
             }
-            write(STDOUT_FILENO, "\x1b[2J", 4);
-            write(STDOUT_FILENO, "\x1b[H", 3);
             exit(0);
             break;
 
