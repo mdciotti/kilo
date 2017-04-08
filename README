@@ -1,0 +1,28 @@
+Kilo
+====
+
+A tiny text editor. Built from scratch with no dependencies,
+thanks to a wonderful guide at the link below from Jeremy Ruten.
+
+http://viewsourcecode.org/snaptoken/kilo/
+
+
+License
+-------
+
+Kilo was originally authored by antirez under the BSD 2-clause
+license. See LICENSE for details.
+
+
+Feature Ideas
+-------------
+
+* Line numbers
+* Soft indent (spaces instead of tabs, backspace removes a tab
+  key's worth of spaces)
+* Auto indent
+* Soft-wrap lines
+* Copy/paste
+* Config file
+* Modal editing
+* Multiple buffers
