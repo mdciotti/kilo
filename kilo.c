@@ -89,6 +89,7 @@ struct editorConfig {
     int screenrows;
     int screencols;
     int numrows;
+    int lineno_maxwidth;
     erow *row;
     int dirty;
     char *filename;
@@ -789,6 +790,11 @@ void editorScroll() {
 }
 
 void editorDrawRows(struct abuf *ab) {
+    char max_lineno[32];
+    E.lineno_maxwidth = snprintf(max_lineno, sizeof(max_lineno),
+        "%d", E.numrows + 1);
+    int leftpad = E.lineno_maxwidth + 1;
+
     int y;
     for (y = 0; y < E.screenrows; y++) {
         int filerow = y + E.rowoff;
@@ -809,9 +815,16 @@ void editorDrawRows(struct abuf *ab) {
                 abAppend(ab, "~", 1);
             }
         } else {
+            char lineno[32];
+            int lineno_size = snprintf(lineno, sizeof(lineno),
+                "%*d ", E.lineno_maxwidth, filerow + 1);
+            abAppend(ab, "\x1b[7m", 4);
+            abAppend(ab, lineno, lineno_size);
+            abAppend(ab, "\x1b[m", 3);
+
             int len = E.row[filerow].rsize - E.coloff;
             if (len < 0) len = 0;
-            if (len > E.screencols) len = E.screencols;
+            if (len > E.screencols - leftpad) len = E.screencols - leftpad;
             char *c = &E.row[filerow].render[E.coloff];
             unsigned char *hl = &E.row[filerow].hl[E.coloff];
             int current_color = -1;
@@ -896,11 +909,12 @@ void editorRefreshScreen() {
     editorDrawStatusBar(&ab);
     editorDrawMessageBar(&ab);
 
-    // Move cursor to E.cx,E.cy
+    // Move cursor to E.cy,E.cx
+    int leftpad = E.lineno_maxwidth + 1;
     char buf[32];
     snprintf(buf, sizeof(buf), "\x1b[%d;%dH",
         (E.cy - E.rowoff) + 1,
-        (E.rx - E.coloff) + 1);
+        (E.rx - E.coloff) + 1 + leftpad);
     abAppend(&ab, buf, strlen(buf));
 
     abAppend(&ab, "\x1b[?25h", 6); // Show cursor
@@ -1098,6 +1112,7 @@ void initEditor() {
     E.rowoff = 0;
     E.coloff = 0;
     E.numrows = 0;
+    E.lineno_maxwidth = 0;
     E.row = NULL;
     E.dirty = 0;
     E.filename = NULL;
